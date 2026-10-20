@@ -1,0 +1,312 @@
+# Project: Interactive 16-Bit PLC Data Register Visualizer
+
+## 1. Objective
+
+Build a modern, interactive, educational web application that demonstrates how a **16-bit PLC Data Register (D)** stores and represents numerical values.
+
+The application should help users understand the relationship between:
+
+- Signed 16-bit integers (INT16)
+- Unsigned 16-bit integers (UINT16)
+- Hexadecimal (HEX)
+- Binary (16 bits)
+- Decimal representations
+- Two's complement for negative numbers
+- Bit-level operations
+
+The primary goal is to provide an intuitive, visually engaging learning tool for PLC programming, particularly IDEC FC6A Data Registers.
+
+## 2. Technology Stack
+
+**You are responsible for selecting the most appropriate technology stack.**
+
+Before implementation:
+
+1. Evaluate the requirements and determine the simplest, most efficient approach.
+2. Prioritize performance, maintainability, responsiveness, and minimal dependencies.
+3. Use a modern frontend framework only if it provides meaningful benefits.
+4. Avoid unnecessary backend services, databases, or external APIs.
+5. Choose an appropriate UI library or implement custom components where beneficial.
+6. Briefly document the chosen stack and why it is suitable.
+
+The application should ideally run entirely in the browser.
+
+## 3. Core Design Principle
+
+A PLC Data Register stores a **16-bit binary pattern**.
+
+Signed integers, unsigned integers, and hexadecimal are different interpretations of the same underlying 16 bits.
+
+The visualizer must demonstrate this principle clearly.
+
+For example:
+
+Binary: `1111 1111 1111 1111`
+
+| Representation | Value |
+|---|---|
+| Signed INT16 | -1 |
+| Unsigned UINT16 | 65535 |
+| Hexadecimal | 0xFFFF |
+
+**Changing the interpretation must not modify the underlying bits.**
+
+## 4. Main Interactive Visualizer
+
+Create a central visual representation of a 16-bit PLC register, labeled **D100** by default.
+
+Display 16 individual bit cells in a horizontal layout.
+
+Each cell must show:
+
+- Bit value: 0 or 1
+- Bit index: 15 through 0
+- Visual distinction between ON and OFF bits
+- Interactive click/tap functionality to toggle the bit
+
+Clearly identify:
+
+- Bit 15: Most Significant Bit (MSB)
+- Bit 0: Least Significant Bit (LSB)
+- Bit 15 as the sign bit when interpreted as INT16
+
+Organize the 16 bits into four groups of four bits to demonstrate their relationship to hexadecimal digits.
+
+## 5. Numerical Representations
+
+Below or alongside the bit visualization, display three synchronized numerical representations.
+
+### A. Signed Integer (INT16)
+
+Range: -32,768 to +32,767
+
+Use two's complement interpretation.
+
+### B. Unsigned Integer (UINT16)
+
+Range: 0 to 65,535
+
+### C. Hexadecimal (HEX)
+
+Range: 0x0000 to 0xFFFF
+
+Display hexadecimal as four digits with a `0x` prefix.
+
+All three representations must update immediately when the underlying 16-bit value changes.
+
+### Example
+
+If the binary pattern is:
+
+`1000 0000 0000 0001`
+
+Display:
+
+- INT16: -32767
+- UINT16: 32769
+- HEX: 0x8001
+
+## 6. Interactive Controls
+
+Implement the following controls.
+
+**A. Bit toggling**
+
+Allow users to click any individual bit to toggle between 0 and 1.
+
+All numerical representations must update instantly.
+
+**B. Numerical input**
+
+Provide editable inputs for:
+
+- Signed decimal
+- Unsigned decimal
+- Hexadecimal
+
+Changing any input should update the 16-bit pattern and all other representations.
+
+Validate each input according to its allowed range.
+
+**C. Slider**
+
+Provide a slider with selectable modes:
+
+- Signed: -32768 to 32767
+- Unsigned: 0 to 65535
+
+The slider must reflect the current bit pattern using the selected interpretation.
+
+**D. Preset buttons**
+
+Include useful presets:
+
+| Preset | Binary meaning |
+|---|---|
+| Zero | 0x0000 |
+| One | 0x0001 |
+| Maximum Signed | 0x7FFF |
+| Minimum Signed | 0x8000 |
+| Maximum Unsigned | 0xFFFF |
+| Alternating Bits | 0xAAAA |
+| All Bits OFF | 0x0000 |
+| All Bits ON | 0xFFFF |
+
+**E. Reset**
+
+Restore the register to zero.
+
+## 7. Educational Features
+
+### Bit Weights
+
+Allow users to display the positional weight of each bit.
+
+For unsigned interpretation:
+
+- Bit 0 = 1
+- Bit 1 = 2
+- Bit 2 = 4
+- ...
+- Bit 15 = 32768
+
+For signed two's complement interpretation, bit 15 has a weight of -32768.
+
+### Hexadecimal Grouping
+
+Visually group the binary digits into four nibbles.
+
+Example:
+
+`1010 1100 0011 1111`
+
+Corresponding hexadecimal:
+
+`A C 3 F`
+
+Show the relationship between each four-bit group and its hexadecimal digit.
+
+### Two's Complement Explanation
+
+When a negative signed value is selected, display a short explanation of how the 16-bit pattern represents that negative number.
+
+Include an optional step-by-step demonstration:
+
+1. Write the positive magnitude in binary.
+2. Invert all 16 bits.
+3. Add 1.
+4. Show the resulting two's complement representation.
+
+Handle -32768 correctly.
+
+## 8. UI/UX Requirements
+
+Design a professional engineering-oriented interface suitable for:
+
+- PLC programming education
+- Technical presentations
+- Classroom demonstrations
+- Self-paced learning
+
+Visual design:
+
+- Modern industrial/technical aesthetic
+- Dark mode preferred
+- Clean typography
+- Distinct ON/OFF bit colors
+- Color-coded numerical representations
+- Responsive layout
+- Smooth, subtle transitions
+- Minimal visual clutter
+
+Use cards, labels, tooltips, and interactive controls where appropriate.
+
+The main 16-bit register should be the visual centerpiece.
+
+On smaller screens, preserve the readability and bit ordering rather than shrinking the bits excessively.
+
+## 9. Technical Requirements
+
+Use a **single 16-bit unsigned value as the internal source of truth**.
+
+All representations must be derived from this value.
+
+Recommended mathematical rules:
+
+Unsigned:
+
+`unsigned = raw & 0xFFFF`
+
+Signed:
+
+`signed = raw >= 0x8000 ? raw - 0x10000 : raw`
+
+Hexadecimal:
+
+`hex = "0x" + raw.toString(16).toUpperCase().padStart(4, "0")`
+
+Bit toggle:
+
+`raw = raw ^ (1 << bitIndex)`
+
+Do not maintain separate independent states for signed, unsigned, hexadecimal, and binary representations.
+
+Ensure input validation and conversion correctly handle:
+
+- Negative numbers
+- Zero
+- Maximum and minimum values
+- Invalid characters
+- Empty inputs during editing
+- Hexadecimal prefixes
+- Leading zeros
+- Two's complement
+- Signed/unsigned interpretation changes
+
+Do not silently overflow or wrap out-of-range user inputs. Provide clear validation feedback.
+
+## 10. Testing
+
+Test all important edge cases, including:
+
+| Raw HEX | INT16 | UINT16 |
+|---|---:|---:|
+| 0x0000 | 0 | 0 |
+| 0x0001 | 1 | 1 |
+| 0x7FFF | 32767 | 32767 |
+| 0x8000 | -32768 | 32768 |
+| 0xFFFF | -1 | 65535 |
+| 0xFF9C | -100 | 65436 |
+
+Verify that editing any representation produces consistent results in all other representations.
+
+Test individual bit toggles, sliders, presets, validation, and mobile responsiveness.
+
+## 11. Deliverables
+
+1. Fully functional interactive web application.
+2. Clean, maintainable source code.
+3. Selected technology stack with a brief explanation.
+4. Instructions for local installation and execution.
+5. Automated tests for the conversion logic.
+6. Production build instructions.
+
+## 12. Implementation Guidance
+
+You have autonomy to determine the most efficient architecture, libraries, and implementation approach.
+
+Prioritize delivering a working, polished visualizer over unnecessary architectural complexity.
+
+Keep the implementation modular enough to support future expansion into:
+
+- 32-bit signed and unsigned integers
+- IEEE 754 floating-point representation
+- Multiple consecutive PLC D registers
+- Bitwise operations (AND, OR, XOR, NOT)
+- Modbus register representation
+- Byte swapping and word swapping
+- PLC memory addressing
+
+**For this version, implement only the 16-bit visualizer.**
+
+The final result should be a technically accurate, interactive learning tool that makes binary, signed, unsigned, and hexadecimal representations easy to understand visually.

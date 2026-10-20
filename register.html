@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#090d12">
+  <title>16-bit PLC Data Register</title>
+  <script>
+    try {
+      if (localStorage.getItem("viz-theme") === "light") {
+        document.documentElement.dataset.theme = "light";
+        document.querySelector('meta[name="theme-color"]').content = "#f4f1ea";
+      }
+    } catch (error) {}
+  </script>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="page" id="app">
+    <header class="masthead">
+      <div>
+        <p class="kicker">PLC data register</p>
+        <h1>16-bit visualizer</h1>
+        <p class="lede">One stored pattern. Signed INT16, unsigned UINT16, and hexadecimal are three readings of those same 16 bits.</p>
+      </div>
+      <div class="masthead-actions">
+        <div class="segment" role="radiogroup" aria-label="Color theme">
+          <button type="button" role="radio" data-theme-choice="dark" aria-checked="true">Dark</button>
+          <button type="button" role="radio" data-theme-choice="light" aria-checked="false">Light</button>
+        </div>
+        <a class="home-link" href="index.html">Programs</a>
+      </div>
+    </header>
+
+    <section class="panel register-panel" aria-labelledby="register-heading">
+      <div class="register-top">
+        <div class="register-name">
+          <label for="register-name">Register</label>
+          <input id="register-name" type="text" value="D100" maxlength="12" spellcheck="false" autocomplete="off" autocapitalize="off">
+        </div>
+        <div>
+          <p id="register-heading" class="register-heading">D100</p>
+          <p id="binary-readout" class="binary-readout">0000 0000 0000 0000</p>
+        </div>
+      </div>
+
+      <p class="scroll-hint">Swipe sideways to read all 16 bits. Bit 15 stays on the left.</p>
+      <div class="bit-scroller">
+        <div id="bit-row" class="nibbles"></div>
+      </div>
+
+      <div class="register-foot">
+        <p id="sign-note" class="sign-note"></p>
+        <label class="weight-toggle" for="show-weights">
+          <input id="show-weights" type="checkbox">
+          Show bit weights
+        </label>
+      </div>
+
+      <div id="weights-readout" class="weights-readout" hidden>
+        <p><span>UINT16</span> <span id="sum-unsigned"></span></p>
+        <p><span>INT16</span> <span id="sum-signed"></span></p>
+        <p class="weight-note">Place values under the bits follow the slider. Bit 15 is 32768 unsigned and -32768 signed. Every other bit has the same weight in both readings.</p>
+      </div>
+    </section>
+
+    <section class="values" aria-label="Numerical representations">
+      <article class="panel value-card signed" id="signed-card">
+        <h2>Signed INT16</h2>
+        <p class="range">-32,768 to 32,767</p>
+        <label class="sr-only" for="input-signed">Signed integer</label>
+        <input id="input-signed" type="text" inputmode="text" spellcheck="false" autocomplete="off" autocapitalize="off" aria-describedby="message-signed" value="0">
+        <p id="message-signed" class="field-message"></p>
+      </article>
+      <article class="panel value-card unsigned">
+        <h2>Unsigned UINT16</h2>
+        <p class="range">0 to 65,535</p>
+        <label class="sr-only" for="input-unsigned">Unsigned integer</label>
+        <input id="input-unsigned" type="text" inputmode="numeric" spellcheck="false" autocomplete="off" autocapitalize="off" aria-describedby="message-unsigned" value="0">
+        <p id="message-unsigned" class="field-message"></p>
+      </article>
+      <article class="panel value-card hex">
+        <h2>Hexadecimal</h2>
+        <p class="range">0x0000 to 0xFFFF</p>
+        <label class="sr-only" for="input-hex">Hexadecimal</label>
+        <input id="input-hex" type="text" inputmode="text" spellcheck="false" autocomplete="off" autocapitalize="characters" aria-describedby="message-hex" value="0x0000">
+        <p id="message-hex" class="field-message"></p>
+      </article>
+    </section>
+
+    <section class="panel controls" aria-labelledby="controls-heading">
+      <div class="control-head">
+        <h2 id="controls-heading">Slider</h2>
+        <div class="segment" role="radiogroup" aria-label="Slider interpretation">
+          <button type="button" role="radio" data-mode="signed" aria-checked="true">Signed</button>
+          <button type="button" role="radio" data-mode="unsigned" aria-checked="false">Unsigned</button>
+        </div>
+      </div>
+      <div class="slider-readout-row">
+        <p id="slider-readout" class="slider-readout">0</p>
+      </div>
+      <input id="slider" type="range" min="-32768" max="32767" value="0" step="1" aria-label="Register value" aria-valuetext="0">
+      <div class="slider-scale">
+        <span id="slider-min">-32768</span>
+        <span id="slider-max">32767</span>
+      </div>
+
+      <h2 class="preset-heading">Presets</h2>
+      <div class="preset-row">
+        <div id="presets" class="presets"></div>
+        <button type="button" id="reset" class="reset">Reset</button>
+      </div>
+    </section>
+
+    <section id="twos" class="panel twos" hidden>
+      <h2>Two's complement</h2>
+      <p id="twos-summary"></p>
+      <details open>
+        <summary>Step by step</summary>
+        <ol id="twos-steps"></ol>
+      </details>
+    </section>
+
+    <footer>
+      <p>Editing a representation writes a new 16-bit pattern. Switching between signed and unsigned only changes how the current pattern is read.</p>
+    </footer>
+  </div>
+  <noscript>This visualizer needs JavaScript to interpret the register.</noscript>
+  <script type="module" src="js/theme.js"></script>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
