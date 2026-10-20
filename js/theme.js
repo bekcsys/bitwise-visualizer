@@ -38,7 +38,9 @@ export class ThemeControl {
     if (meta) meta.setAttribute("content", THEME_COLOR[theme]);
     for (const button of document.querySelectorAll("[data-theme-choice]")) {
       if (!(button instanceof HTMLButtonElement)) continue;
-      button.setAttribute("aria-checked", button.dataset.themeChoice === theme ? "true" : "false");
+      const selected = button.dataset.themeChoice === theme;
+      button.setAttribute("aria-pressed", selected ? "true" : "false");
+      button.classList.toggle("is-selected", selected);
     }
   }
 }

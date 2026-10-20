@@ -466,7 +466,8 @@ footer p,
   padding: 7px 14px;
 }
 
-.segment button[aria-checked="true"] {
+.segment button[aria-checked="true"],
+.segment button.is-selected {
   background: var(--amber-fill);
   color: var(--ink);
 }
